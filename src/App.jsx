@@ -8,25 +8,17 @@ import categoriesFromServer from './api/categories';
 import usersFromServer from './api/users';
 
 const products = productsFromServer.map(product => {
-  const category = categoriesFromServer.find(
+  const categories = categoriesFromServer.find(
     category => category.id === product.categoryId,
   ); // find by product.categoryId
-  const user = usersFromServer.find(user => user.id === category.ownerId); // find by category.ownerId
+  const users = usersFromServer.find(user => user.id === categories.ownerId); // find by category.ownerId
 
-  return { ...product, category, user };
+  return { ...product, categories, users };
 });
 
 export const App = () => {
   const [selectedUser, setSelectedUser] = useState('');
   const [query, setQuery] = useState('');
-
-  const filteredProducts = () => {
-    if (!slectedUser && query) {
-      return products.filter(product =>
-        product.name.toLowerCase().includes(query.toLowerCase().trim()),
-      );
-    }
-  };
 
   return (
     <div className="section">
@@ -197,17 +189,17 @@ export const App = () => {
 
                   <td data-cy="ProductName">{product.name}</td>
                   <td data-cy="ProductCategory">
-                    {product.category.icon}-{product.category.title}
+                    {product.categories.icon}-{product.categories.title}
                   </td>
 
                   <td
                     data-cy="ProductUser"
                     className={cn({
-                      'has-text-danger': product.user.sex === 'f',
-                      'has-text-info': product.user.sex === 'm',
+                      'has-text-danger': product.users.sex === 'f',
+                      'has-text-info': product.users.sex === 'm',
                     })}
                   >
-                    {product.user.name}
+                    {product.users.name}
                   </td>
                 </tr>
               ))}
